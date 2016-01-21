@@ -101,7 +101,7 @@ class NonogramSolver(object):
 			pass_cnt += 1
 
 if __name__ == '__main__':
-	path = 'nono.json'
+	path = 'examples/1.json'
 	print(sys.argv)
 	if len(sys.argv) > 1:
 		path = sys.argv[1]
