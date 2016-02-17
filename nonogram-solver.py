@@ -35,9 +35,13 @@ class NonogramSolver(object):
 		return s
 
 	'''
-	takes ar and ref then find all possible positions and superposes them to get positions that doesnt change
-	@param ar: Array an array of consecutive black marks
-	@param ref: int total of
+	row solving algorithm:
+	generate all combinations that doesn't violate previously found cells
+	for each possible combination mark common cells
+	return result of common cells as new solution row
+
+	@param ar: Array an array of count of consecutive black marks
+	@param ref: int current solution for this row
 	@return Array yielded possible combination of marks starting starting and ending with num of empty
 	'''
 	@staticmethod
@@ -92,12 +96,22 @@ class NonogramSolver(object):
 		return f(N)/f(N-R)/f(R)
 
 
+	'''
+	Algorithm is very simple:
+	repeat until all cells are solved:
+		turn every column and row in to rows
+		solve for generated row
+		update result matrix
+	@param self
+	'''
 	def solve(self):
 		pass_cnt = 1
 		while np.sum(self.NONO == 0) != 0:
 			print('Pass:', pass_cnt)
+			# pass rows
 			for i, r in enumerate(self.marks['r']):
 				self.NONO[i, :] = NonogramSolver.solve_row(r, self.NONO[i])
+			# pass cols
 			for j, c in enumerate(self.marks['c']):
 				self.NONO[:, j] = NonogramSolver.solve_row(c, self.NONO[:, j])
 			print(self)
@@ -109,6 +123,5 @@ if __name__ == '__main__':
 	if len(sys.argv) > 1:
 		path = sys.argv[1]
 	solver = NonogramSolver(path)
-#	print(NonogramSolver.solve_row([1, 1, 1], [0, 0, 0, 0, 1]))
 	solver.solve()
 	print('Solution:\n', solver)
