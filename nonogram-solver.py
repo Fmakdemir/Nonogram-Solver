@@ -7,6 +7,9 @@ import numpy as np
 import math
 import itertools
 
+## TODO: there is a problem where one of cells might switch to next cell
+## to reproduce use example 6
+
 # 0-'*': unknown
 # 1-'X': black
 # 2-' ': white
