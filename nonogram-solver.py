@@ -126,4 +126,4 @@ if __name__ == '__main__':
 		path = sys.argv[1]
 	solver = NonogramSolver(path)
 	solver.solve()
-	print('Solution:\n', solver)
+	print('Solution:\n', solver, sep='')
