@@ -1,4 +1,4 @@
-#!/usr/bin/python3.4
+#!/usr/bin/env python3
 
 import json
 import os
@@ -9,6 +9,8 @@ import itertools
 
 ## TODO: there is a problem where one of cells might switch to next cell
 ## to reproduce use example 6
+
+## TODO: use argparse to get arguments
 
 # 0-'*': unknown
 # 1-'X': black
@@ -124,4 +126,4 @@ if __name__ == '__main__':
 		path = sys.argv[1]
 	solver = NonogramSolver(path)
 	solver.solve()
-	print('Solution:\n', solver)
+	print('Solution:\n', solver, sep='')
