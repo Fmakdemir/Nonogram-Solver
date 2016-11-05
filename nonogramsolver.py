@@ -6,35 +6,34 @@ import sys
 import numpy as np
 import math
 import itertools
+import argparse
 
 ## TODO: there is a problem where one of cells might switch to next cell
 ## to reproduce use example 6
 
-## TODO: use argparse to get arguments
-
 # 0-'*': unknown
 # 1-'X': black
-# 2-' ': white
-NCH = ['*', 'X', ' ']
+# 2-'.': white
+NCH = ['*', 'X', '.']
 
 class NonogramSolver(object):
 	def __init__(self, path):
 		self.marks = []
 		with open(path, 'r') as f:
 			self.marks = json.load(f)
-		print(self.marks)
+		self._verbose = False
+		self.__print(self.marks)
+
 		self.RC = len(self.marks['r'])
 		self.CC = len(self.marks['c'])
 
 		self.NONO = np.zeros((self.RC, self.CC), dtype=np.int)
 
 	def __str__(self):
-		s = ''
-		for r in self.NONO:
-			for c in r:
-				s += NCH[c]
-			s += '\n'
-		return s
+		return '\n'.join([''.join([NCH[c] for c in r]) for r in self.NONO])
+
+	def set_verbose(self, verbose):
+		self._verbose = verbose
 
 	'''
 	row solving algorithm:
@@ -50,7 +49,6 @@ class NonogramSolver(object):
 	def solve_row(ar, ref):
 		if np.sum(ref == 0) == 0:
 			return ref
-#		print('Reference:', ref)
 		N = len(ref)
 		K = N - sum(ar)
 		res_ar = False
@@ -65,7 +63,6 @@ class NonogramSolver(object):
 				w_ar.insert(2*i+1, v)
 
 			res = [x for r in w_ar for x in r]
-#			print(res)
 			match = True
 			for i in range(N):
 				if ref[i] == 0 or ref[i] == res[i]:
@@ -74,14 +71,12 @@ class NonogramSolver(object):
 				break
 			if not match:
 				continue
-#			print(res)
 			if not res_ar:
 				res_ar = res
 				continue
 			for i in range(N):
 				if res_ar[i] != res[i]:
 					res_ar[i] = 0
-#		print('res_ar:', res_ar)
 		return np.array(res_ar)
 
 
@@ -97,11 +92,14 @@ class NonogramSolver(object):
 		f = math.factorial
 		return f(N)/f(N-R)/f(R)
 
+	def __print(self, *args, **kwargs):
+		if self._verbose:
+			print(*args, **kwargs)
 
 	'''
 	Algorithm is very simple:
 	repeat until all cells are solved:
-		turn every column and row in to rows
+		turn every column and row into rows
 		solve for generated row
 		update result matrix
 	@param self
@@ -109,21 +107,27 @@ class NonogramSolver(object):
 	def solve(self):
 		pass_cnt = 1
 		while np.sum(self.NONO == 0) != 0:
-			print('Pass:', pass_cnt)
+			self.__print('Pass:', pass_cnt)
+			# TODO: add check if get any improvements
 			# pass rows
 			for i, r in enumerate(self.marks['r']):
 				self.NONO[i, :] = NonogramSolver.solve_row(r, self.NONO[i])
 			# pass cols
 			for j, c in enumerate(self.marks['c']):
 				self.NONO[:, j] = NonogramSolver.solve_row(c, self.NONO[:, j])
-			print(self)
+			self.__print(self)
 			pass_cnt += 1
 
+
+def solve(path):
+	return NonogramSolver(path).solve()
+
 if __name__ == '__main__':
-	path = 'examples/1.json'
-	print(sys.argv)
-	if len(sys.argv) > 1:
-		path = sys.argv[1]
-	solver = NonogramSolver(path)
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-f', '--file', required=True, help='nongram file in json format')
+	args = parser.parse_args()
+
+	solver = NonogramSolver(args.file)
 	solver.solve()
-	print('Solution:\n', solver, sep='')
+	# print('Solution:\n', solver, sep='')
+	print(solver)
