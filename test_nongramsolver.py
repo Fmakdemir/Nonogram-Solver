@@ -23,7 +23,6 @@ def test_solver():
 '''
 send all nonograms request in array format
 '''
-'''
 def test_generator_array():
 	for path in sorted(glob.glob('examples/*.res')):
 		print(path)
@@ -35,7 +34,7 @@ def test_generator_array():
 			res = json.load(f)
 		assert(json.dumps(test_res) == json.dumps(res))
 		print('....checked')
-'''
+
 '''
 send all nonograms request in string format
 '''
